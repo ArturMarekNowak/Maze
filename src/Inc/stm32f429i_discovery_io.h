@@ -28,7 +28,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f429i_discovery.h"
 /* Include IO component driver */
-#include "../Drivers/BSP/Components/stmpe811/stmpe811.h"
+#include "../../Drivers/BSP/Components/stmpe811/stmpe811.h"
 
 /** @addtogroup BSP
   * @{

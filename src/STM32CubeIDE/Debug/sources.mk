@@ -24,6 +24,10 @@ C_DEPS :=
 SUBDIRS := \
 Application/Startup \
 Application/User \
+Drivers/BSP/Components/ili9341 \
+Drivers/BSP/Components/l3gd20 \
+Drivers/BSP/Components/stmpe811 \
 Drivers/CMSIS \
-Drivers/STM32F4xx_HAL_Driver \
+Drivers/STM32F4xx_HAL_Driver/Src \
+Utilities/Fonts \
 

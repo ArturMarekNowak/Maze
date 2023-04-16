@@ -26,12 +26,11 @@ int main(void)
 {
   HAL_Init();
   SystemClock_Config();
-  BSP_LED_Init(LED3);
+  BSP_LCD_Init();
 
   while (1)
   {
-	  BSP_LED_Toggle(LED3);
-	  HAL_Delay(1000);
+
   }
 }
 

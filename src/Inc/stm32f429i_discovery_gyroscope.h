@@ -28,9 +28,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f429i_discovery.h"
 /* Include Gyroscope component driver */
-#include "../Drivers/BSP/Components/l3gd20/l3gd20.h"
+#include "../../Drivers/BSP/Components/l3gd20/l3gd20.h"
 #if defined(USE_STM32F429I_DISCOVERY_REVD)
-#include "../Drivers/BSP/Components/i3g4250d/i3g4250d.h"
+#include "../../Drivers/BSP/Components/i3g4250d/i3g4250d.h"
 #endif /* USE_STM32F429I_DISCOVERY_REVD */
 /** @addtogroup BSP
   * @{
