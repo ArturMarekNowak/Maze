@@ -5,7 +5,7 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-C:/Users/artur/OneDrive/Desktop/Workspace/Maze/Maze/Src/main.c \
+C:/Users/artur/OneDrive/Desktop/Workspace/Maze/src/Src/main.c \
 ../Application/User/stm32f429i_discovery.c \
 ../Application/User/stm32f429i_discovery_eeprom.c \
 ../Application/User/stm32f429i_discovery_gyroscope.c \
@@ -13,8 +13,8 @@ C:/Users/artur/OneDrive/Desktop/Workspace/Maze/Maze/Src/main.c \
 ../Application/User/stm32f429i_discovery_lcd.c \
 ../Application/User/stm32f429i_discovery_sdram.c \
 ../Application/User/stm32f429i_discovery_ts.c \
-C:/Users/artur/OneDrive/Desktop/Workspace/Maze/Maze/Src/stm32f4xx_hal_msp.c \
-C:/Users/artur/OneDrive/Desktop/Workspace/Maze/Maze/Src/stm32f4xx_it.c \
+C:/Users/artur/OneDrive/Desktop/Workspace/Maze/src/Src/stm32f4xx_hal_msp.c \
+C:/Users/artur/OneDrive/Desktop/Workspace/Maze/src/Src/stm32f4xx_it.c \
 ../Application/User/syscalls.c \
 ../Application/User/sysmem.c 
 
@@ -48,13 +48,13 @@ C_DEPS += \
 
 
 # Each subdirectory must supply rules for building sources it contributes
-Application/User/main.o: C:/Users/artur/OneDrive/Desktop/Workspace/Maze/Maze/Src/main.c Application/User/subdir.mk
+Application/User/main.o: C:/Users/artur/OneDrive/Desktop/Workspace/Maze/src/Src/main.c Application/User/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../../Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 Application/User/%.o Application/User/%.su Application/User/%.cyclo: ../Application/User/%.c Application/User/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../../Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
-Application/User/stm32f4xx_hal_msp.o: C:/Users/artur/OneDrive/Desktop/Workspace/Maze/Maze/Src/stm32f4xx_hal_msp.c Application/User/subdir.mk
+Application/User/stm32f4xx_hal_msp.o: C:/Users/artur/OneDrive/Desktop/Workspace/Maze/src/Src/stm32f4xx_hal_msp.c Application/User/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../../Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
-Application/User/stm32f4xx_it.o: C:/Users/artur/OneDrive/Desktop/Workspace/Maze/Maze/Src/stm32f4xx_it.c Application/User/subdir.mk
+Application/User/stm32f4xx_it.o: C:/Users/artur/OneDrive/Desktop/Workspace/Maze/src/Src/stm32f4xx_it.c Application/User/subdir.mk
 	arm-none-eabi-gcc "$<" -mcpu=cortex-m4 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F429xx -c -I../../Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc -I../../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I../../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I../../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -fcyclomatic-complexity -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@"
 
 clean: clean-Application-2f-User

@@ -18,6 +18,7 @@
   */
 /* USER CODE END Header */
 #include "main.h"
+#include "stm32f429i_discovery_lcd.h"
 
 void SystemClock_Config(void);
 
@@ -25,12 +26,15 @@ int main(void)
 {
   HAL_Init();
   SystemClock_Config();
+  BSP_LED_Init(LED3);
 
   while (1)
   {
-
+	  BSP_LED_Toggle(LED3);
+	  HAL_Delay(1000);
   }
 }
+
 
 void SystemClock_Config(void)
 {
