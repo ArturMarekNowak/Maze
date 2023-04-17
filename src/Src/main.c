@@ -22,15 +22,29 @@
 
 void SystemClock_Config(void);
 
+char str[] = "Hello from BSP LCD demo!";
+
+
 int main(void)
 {
   HAL_Init();
   SystemClock_Config();
   BSP_LCD_Init();
 
+  BSP_LCD_LayerDefaultInit(0, LCD_FRAME_BUFFER);
+  BSP_LCD_LayerDefaultInit(1, LCD_FRAME_BUFFER + BUFFER_OFFSET);
+  BSP_LCD_SelectLayer(0);
+  BSP_LCD_SetBackColor(LCD_COLOR_BLUE);
+  BSP_LCD_SelectLayer(1);
+  BSP_LCD_SetBackColor(LCD_COLOR_BLUE);
+  BSP_LCD_Clear(LCD_COLOR_BLUE);
+
   while (1)
   {
-
+	  BSP_LCD_Clear(LCD_COLOR_BLUE);
+	  HAL_Delay(1000);
+	  BSP_LCD_Clear(LCD_COLOR_MAGENTA);
+	  HAL_Delay(1000);
   }
 }
 
