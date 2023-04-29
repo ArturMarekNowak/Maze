@@ -16,57 +16,17 @@
   ******************************************************************************
   */
 
-/* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include <math.h>
 #include <stdbool.h>
 #include "stm32f4xx_hal_rng.h"
 #include "stlogo.h"
 
-/** @addtogroup STM32F4xx_HAL_Examples
-  * @{
-  */
-
-/** @addtogroup BSP
-  * @{
-  */ 
-
-/* Private typedef -----------------------------------------------------------*/
-/* Private define ------------------------------------------------------------*/
-/* Private macro -------------------------------------------------------------*/
-/* Private variables ---------------------------------------------------------*/
-static uint8_t DemoIndex = 0;
-#ifdef EE_M24LR64
-uint8_t NbLoop = 1;
-#endif /* EE_M24LR64 */
-__IO uint8_t ubKeyPressed = RESET; 
-
-BSP_DemoTypedef BSP_examples[]=
-{
-  {Touchscreen_demo, "TOUCHSCREEN", 0}, 
-  {LCD_demo, "LCD", 0}, 
-  {Log_demo, "LCD LOG", 0},     
-  {MEMS_demo, "MEMS", 0}, 
-#ifdef EE_M24LR64
-  {EEPROM_demo, "EEPROM", 0}, 
-#endif /* EE_M24LR64 */
-};
-
-/* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Display_DemoDescription(void);
 bool BallHitTheLosingWall(int array[], int x_position, int y_position, int radius);
 bool BallHitTheWinningWall(int x_position, int y_position);
 bool CalculateIfCollisionOccurred(int array[], int x, int y);
-
-
-/* Private functions ---------------------------------------------------------*/
-
-/**
-  * @brief  Main program
-  * @param  None
-  * @retval None
-  */
 
 int static failures = 0, victories = 0;
 
@@ -87,24 +47,15 @@ int main(void)
 	if (HAL_RNG_Init(&rng_inst) != HAL_OK)
 		return 0xffffffff;
 
-	uint32_t rnd = 0xff;
-
-	if (HAL_RNG_GenerateRandomNumber(&rng_inst, &rnd) != HAL_OK)
-		return 0xfffffffE;
-
-
-
 	start:
 	BSP_LCD_LayerDefaultInit(1, LCD_FRAME_BUFFER);
-
 	BSP_LCD_SelectLayer(1);
-
 	BSP_LCD_SetFont(&Font12);
-
 	BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
 	BSP_LCD_Clear(LCD_COLOR_LIGHTBLUE);
-	BSP_LCD_DisplayStringAt(5, 280, "failures:", LEFT_MODE);
+
 	char str[100];
+	BSP_LCD_DisplayStringAt(5, 280, "failures:", LEFT_MODE);
 	sprintf(str, "%d", failures);
 	BSP_LCD_DisplayStringAt(85, 280, &str, LEFT_MODE);
 	BSP_LCD_DisplayStringAt(5, 300, "victories:", LEFT_MODE);
@@ -115,9 +66,7 @@ int main(void)
 	Maze_Generate(maze, 15, 17, &rng_inst);
 	Maze_Display(maze, 15, 17, 16, LCD_COLOR_DARKBLUE);
 
-	//int x_position = 22, y_position = 23;
-
-	int x_position = 210, y_position = 240;
+	int x_position = 22, y_position = 23;
 
 	BSP_LCD_FillCircle(x_position, y_position, 3);
 
@@ -130,10 +79,8 @@ int main(void)
 
 	while (1)
 	{
-		/* Read Gyro Angular data */
 		BSP_GYRO_GetXYZ(Buffer);
 
-	    /* Update autoreload and capture compare registers value */
 	    Xval = Buffer[0];
 	    Yval = Buffer[1];
 	    Zval = Buffer[2];
