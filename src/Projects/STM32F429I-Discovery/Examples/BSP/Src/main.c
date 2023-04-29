@@ -50,9 +50,13 @@ BSP_DemoTypedef BSP_examples[]=
 #endif /* EE_M24LR64 */
 };
 
+#define ABS(x)         (x < 0) ? (-x) : x
+
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Display_DemoDescription(void);
+
+#define  CIRCLE_RADIUS        30
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -84,6 +88,9 @@ int main(void)
   /*##-1- Initialize the LCD #################################################*/
   /* Initialize the LCD */
   BSP_LCD_Init();
+  BSP_GYRO_Init();
+
+
 
 
   __HAL_RCC_RNG_CLK_ENABLE();
@@ -125,13 +132,64 @@ int main(void)
     Maze_Generate(maze, 15, 17, &rng_inst);
     Maze_Display(maze, 15, 17, 16, LCD_COLOR_RED);
 
-    BSP_LCD_FillCircle(22, 23, 3);
+    int x_position = 22, y_position = 23;
+    BSP_LCD_FillCircle(x_position, y_position, 3);
 
+    float Buffer[3];
+    float Xval, Yval, Zval = 0x00;
+    float sensitivity = 5000.0f;
+
+    BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
   /* Wait For User inputs */
   while (1)
   {
-  }
+	  /* Read Gyro Angular data */
+	      BSP_GYRO_GetXYZ(Buffer);
 
+	      /* Update autoreload and capture compare registers value */
+	      Xval = ABS((Buffer[0]));
+	      Yval = ABS((Buffer[1]));
+	      Zval = ABS((Buffer[2]));
+
+	      if((Xval>Yval) && (Xval>Zval))
+	      {
+	        if(Buffer[0] > sensitivity)
+	        {
+	        	y_position++;
+	        	BSP_LCD_FillCircle(x_position, y_position, 3);
+	        }
+	        else if(Buffer[0] < -sensitivity)
+	        {
+	        	y_position--;
+	        	BSP_LCD_FillCircle(x_position, y_position, 3);
+	        }
+	      }
+	      else if ((Yval>Xval) && (Yval>Zval))
+	      {
+	        if(Buffer[1] < -sensitivity)
+	        {
+	        	x_position--;
+	        	BSP_LCD_FillCircle(x_position, y_position, 3);
+	        }
+	        else if(Buffer[1] > sensitivity)
+	        {
+	        	x_position++;
+	        	BSP_LCD_FillCircle(x_position, y_position, 3);
+	        }
+	      }
+	      else if ((Zval>Xval) && (Zval>Yval))
+	      {
+	        if(Buffer[2] < -sensitivity)
+	        {
+	        	BSP_LCD_FillCircle(x_position, y_position, 3);
+	        }
+	        else if(Buffer[2] > sensitivity)
+	        {
+	        	BSP_LCD_FillCircle(x_position, y_position, 3);
+	        }
+	      }
+	      HAL_Delay(25);
+  }
 }
 
 /**
