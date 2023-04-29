@@ -67,140 +67,154 @@ bool CalculateIfCollisionOccurred(int array[], int x, int y);
   * @param  None
   * @retval None
   */
+
+int static failures = 0, victories = 0;
+
 int main(void)
 { 
-  HAL_Init();
+	HAL_Init();
 
-  SystemClock_Config();
+	SystemClock_Config();
 
-  BSP_LCD_Init();
-  BSP_GYRO_Init();
+	BSP_LCD_Init();
+	BSP_GYRO_Init();
 
-  __HAL_RCC_RNG_CLK_ENABLE();
-  static RNG_HandleTypeDef rng_inst;
+	__HAL_RCC_RNG_CLK_ENABLE();
+	static RNG_HandleTypeDef rng_inst;
 
-  rng_inst.Instance = RNG;
+	rng_inst.Instance = RNG;
 
-  if (HAL_RNG_Init(&rng_inst) != HAL_OK)
-	  return 0xffffffff;
+	if (HAL_RNG_Init(&rng_inst) != HAL_OK)
+		return 0xffffffff;
 
-  uint32_t rnd = 0xff;
+	uint32_t rnd = 0xff;
 
-  if (HAL_RNG_GenerateRandomNumber(&rng_inst, &rnd) != HAL_OK)
-	  return 0xfffffffE;
+	if (HAL_RNG_GenerateRandomNumber(&rng_inst, &rnd) != HAL_OK)
+		return 0xfffffffE;
 
-  start:
-  BSP_LCD_LayerDefaultInit(1, LCD_FRAME_BUFFER);
 
-  BSP_LCD_SelectLayer(1);
 
-  BSP_LCD_SetFont(&LCD_DEFAULT_FONT);
+	start:
+	BSP_LCD_LayerDefaultInit(1, LCD_FRAME_BUFFER);
 
-  BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
-  BSP_LCD_Clear(LCD_COLOR_WHITE);
+	BSP_LCD_SelectLayer(1);
 
-  int static maze[255];
-  Maze_Generate(maze, 15, 17, &rng_inst);
-  Maze_Display(maze, 15, 17, 16, LCD_COLOR_RED);
+	BSP_LCD_SetFont(&Font12);
 
-  int x_position = 22, y_position = 23;
-  BSP_LCD_FillCircle(x_position, y_position, 3);
+	BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
+	BSP_LCD_Clear(LCD_COLOR_LIGHTBLUE);
+	BSP_LCD_DisplayStringAt(5, 280, "failures:", LEFT_MODE);
+	char str[100];
+	sprintf(str, "%d", failures);
+	BSP_LCD_DisplayStringAt(85, 280, &str, LEFT_MODE);
+	BSP_LCD_DisplayStringAt(5, 300, "victories:", LEFT_MODE);
+	sprintf(str, "%d", victories);
+	BSP_LCD_DisplayStringAt(85, 300, &str, LEFT_MODE);
 
-  float Buffer[3];
-  float Xval, Yval, Zval = 0x00;
-  float sensitivity = 5000.0f;
-  int distance = 1;
+	int static maze[255];
+	Maze_Generate(maze, 15, 17, &rng_inst);
+	Maze_Display(maze, 15, 17, 16, LCD_COLOR_DARKBLUE);
 
-  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	int x_position = 22, y_position = 23;
+	BSP_LCD_FillCircle(x_position, y_position, 3);
 
-  while (1)
-  {
-	  /* Read Gyro Angular data */
-	      BSP_GYRO_GetXYZ(Buffer);
+	float Buffer[3];
+	float Xval, Yval, Zval = 0x00;
+	float sensitivity = 5000.0f;
+	int distance = 1;
 
-	      /* Update autoreload and capture compare registers value */
-	      Xval = Buffer[0];
-	      Yval = Buffer[1];
-	      Zval = Buffer[2];
+	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 
-	      if (Xval > sensitivity && Yval < sensitivity && Yval > -sensitivity)
-	      {
-	    	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-	    	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	    	  y_position += distance;
-	    	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
-	    	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	    	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
-	      }
-	      else if (Xval < -sensitivity && Yval < sensitivity && Yval > -sensitivity)
-	      {
-	    	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  y_position -= distance;
-	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
-	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
-	      }
-	      else if (Yval > sensitivity && Xval < sensitivity && Xval > -sensitivity)
-	      {
-	    	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-	    	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	    	  x_position += distance;
-	    	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
-	    	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	    	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
-	      }
-	      else if (Yval < -sensitivity && Xval < sensitivity && Xval > -sensitivity)
-	      {
-	      	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  x_position -= distance;
-	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
-	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
-	      }
-	      else if (Yval > sensitivity && Xval > sensitivity)
-	      {
-	      	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  x_position += distance;
-	      	  y_position += distance;
-	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
-	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
-	      }
-	      else if (Yval < -sensitivity && Xval < -sensitivity)
-	      {
-	      	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  x_position -= distance;
-	      	  y_position -= distance;
-	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
-	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
-	      }
-	      else if (Yval > sensitivity && Xval < -sensitivity)
-	      {
-	      	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  x_position += distance;
-	      	  y_position -= distance;
-	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
-	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
-	      }
-	      else if (Yval < -sensitivity && Xval > sensitivity)
-	      {
-	      	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  x_position -= distance;
-	      	  y_position += distance;
-	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
-	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
-	      }
-	      HAL_Delay(20);
-  }
+	while (1)
+	{
+		/* Read Gyro Angular data */
+		BSP_GYRO_GetXYZ(Buffer);
+
+	    /* Update autoreload and capture compare registers value */
+	    Xval = Buffer[0];
+	    Yval = Buffer[1];
+	    Zval = Buffer[2];
+
+	    if (Xval > sensitivity && Yval < sensitivity && Yval > -sensitivity)
+	    {
+	    	BSP_LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
+	    	BSP_LCD_FillCircle(x_position, y_position, 3);
+	    	y_position += distance;
+	    	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	    	BSP_LCD_FillCircle(x_position, y_position, 3);
+	    	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	    }
+	    else if (Xval < -sensitivity && Yval < sensitivity && Yval > -sensitivity)
+	    {
+	    	BSP_LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
+	      	BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	y_position -= distance;
+	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	      	BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	    }
+	    else if (Yval > sensitivity && Xval < sensitivity && Xval > -sensitivity)
+	    {
+	    	BSP_LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
+	    	BSP_LCD_FillCircle(x_position, y_position, 3);
+	    	x_position += distance;
+	    	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	    	BSP_LCD_FillCircle(x_position, y_position, 3);
+	    	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	    }
+	    else if (Yval < -sensitivity && Xval < sensitivity && Xval > -sensitivity)
+	    {
+	      	BSP_LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
+	      	BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	x_position -= distance;
+	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	      	BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	    }
+	    else if (Yval > sensitivity && Xval > sensitivity)
+	    {
+	      	BSP_LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
+	      	BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	x_position += distance;
+	        y_position += distance;
+	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	      	BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	    }
+	    else if (Yval < -sensitivity && Xval < -sensitivity)
+	    {
+	      	BSP_LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
+	      	BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	x_position -= distance;
+	      	y_position -= distance;
+	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	      	BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	    }
+	    else if (Yval > sensitivity && Xval < -sensitivity)
+	    {
+	      	BSP_LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
+	      	BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	x_position += distance;
+	      	y_position -= distance;
+	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	      	BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	    }
+	    else if (Yval < -sensitivity && Xval > sensitivity)
+	    {
+	      	BSP_LCD_SetTextColor(LCD_COLOR_LIGHTBLUE);
+	      	BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	x_position -= distance;
+	      	y_position += distance;
+	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	      	BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	    }
+
+
+	    HAL_Delay(20);
+	}
 }
 
 bool BallHitTheWall(int array[], int x_position, int y_position, int radius)
@@ -223,7 +237,10 @@ bool BallHitTheWall(int array[], int x_position, int y_position, int radius)
 		CalculateIfCollisionOccurred(array, x_position - curx, y_position + cury) ||
 		CalculateIfCollisionOccurred(array, x_position + cury, y_position + curx) ||
 		CalculateIfCollisionOccurred(array, x_position - cury, y_position + curx))
+		{
+			failures++;
 			return true;
+		}
 
 		if (d < 0)
 		{
@@ -306,48 +323,6 @@ static void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;  
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;  
   HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
-}
-
-/**
-  * @brief  Display main demo messages
-  * @param  None
-  * @retval None
-  */
-static void Display_DemoDescription(void)
-{
-  uint8_t desc[50];
-  
-  /* Set LCD Foreground Layer  */
-  BSP_LCD_SelectLayer(1);
-  
-  BSP_LCD_SetFont(&LCD_DEFAULT_FONT);
-  
-  /* Clear the LCD */ 
-  BSP_LCD_SetBackColor(LCD_COLOR_WHITE); 
-  BSP_LCD_Clear(LCD_COLOR_WHITE);
-  
-  /* Set the LCD Text Color */
-  BSP_LCD_SetTextColor(LCD_COLOR_DARKBLUE);  
-  
-  /* Display LCD messages */
-  BSP_LCD_DisplayStringAt(0, 10, (uint8_t*)"STM32F429I BSP", CENTER_MODE);
-  BSP_LCD_SetFont(&Font16);
-  BSP_LCD_DisplayStringAt(0, 35, (uint8_t*)"Drivers examples", CENTER_MODE);
-  
-  /* Draw Bitmap */
-  BSP_LCD_DrawBitmap((BSP_LCD_GetXSize() - 80)/2, 65, (uint8_t *)stlogo);
-  
-  BSP_LCD_SetFont(&Font8);
-  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()- 20, (uint8_t*)"Copyright (c) STMicroelectronics 2017", CENTER_MODE);
-  
-  BSP_LCD_SetFont(&Font12);
-  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
-  BSP_LCD_FillRect(0, BSP_LCD_GetYSize()/2 + 15, BSP_LCD_GetXSize(), 60);
-  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-  BSP_LCD_SetBackColor(LCD_COLOR_BLUE); 
-  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/2 + 30, (uint8_t*)"Press USER Button to start:", CENTER_MODE);
-  sprintf((char *)desc,"%s example", BSP_examples[DemoIndex].DemoName);
-  BSP_LCD_DisplayStringAt(0, BSP_LCD_GetYSize()/2 + 45, (uint8_t *)desc, CENTER_MODE);   
 }
 
 /**
