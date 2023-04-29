@@ -142,7 +142,11 @@ int main(void)
 	    	y_position += distance;
 	    	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	    	BSP_LCD_FillCircle(x_position, y_position, 3);
-	    	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	    	if (BallHitTheWall(maze, x_position, y_position, 3))
+	    	{
+	    		DisplayFailureScreen();
+	    		goto start;
+	    	}
 	    }
 	    else if (Xval < -sensitivity && Yval < sensitivity && Yval > -sensitivity)
 	    {
@@ -151,7 +155,11 @@ int main(void)
 	      	y_position -= distance;
 	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	      	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	{
+	    		DisplayFailureScreen();
+	    		goto start;
+	    	}
 	    }
 	    else if (Yval > sensitivity && Xval < sensitivity && Xval > -sensitivity)
 	    {
@@ -160,7 +168,11 @@ int main(void)
 	    	x_position += distance;
 	    	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	    	BSP_LCD_FillCircle(x_position, y_position, 3);
-	    	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	    	if (BallHitTheWall(maze, x_position, y_position, 3))
+	    	{
+	    		DisplayFailureScreen();
+	    		goto start;
+	    	}
 	    }
 	    else if (Yval < -sensitivity && Xval < sensitivity && Xval > -sensitivity)
 	    {
@@ -169,7 +181,11 @@ int main(void)
 	      	x_position -= distance;
 	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	      	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	{
+	    		DisplayFailureScreen();
+	    		goto start;
+	    	}
 	    }
 	    else if (Yval > sensitivity && Xval > sensitivity)
 	    {
@@ -179,7 +195,11 @@ int main(void)
 	        y_position += distance;
 	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	      	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	{
+	    		DisplayFailureScreen();
+	    		goto start;
+	    	}
 	    }
 	    else if (Yval < -sensitivity && Xval < -sensitivity)
 	    {
@@ -189,7 +209,11 @@ int main(void)
 	      	y_position -= distance;
 	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	      	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	{
+	    		DisplayFailureScreen();
+	    		goto start;
+	    	}
 	    }
 	    else if (Yval > sensitivity && Xval < -sensitivity)
 	    {
@@ -199,7 +223,11 @@ int main(void)
 	      	y_position -= distance;
 	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	      	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	{
+	    		DisplayFailureScreen();
+	    		goto start;
+	    	}
 	    }
 	    else if (Yval < -sensitivity && Xval > sensitivity)
 	    {
@@ -209,12 +237,23 @@ int main(void)
 	      	y_position += distance;
 	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
+	      	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	{
+	    		DisplayFailureScreen();
+	    		goto start;
+	    	}
 	    }
-
-
 	    HAL_Delay(20);
 	}
+}
+
+void DisplayFailureScreen()
+{
+	BSP_LCD_Clear(LCD_COLOR_LIGHTBLUE);
+	BSP_LCD_SetFont(&Font20);
+	BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+	BSP_LCD_DisplayStringAt(25, 140, "You have lost!", LEFT_MODE);
+	HAL_Delay(2000);
 }
 
 bool BallHitTheWall(int array[], int x_position, int y_position, int radius)
