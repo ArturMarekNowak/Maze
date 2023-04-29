@@ -68,6 +68,6 @@ ctrlp.root
 
 .metadata
 .settings
-[Rr]elease
-[Dd]ebug
+[Rr]elease/
+[Dd]ebug/
 .launch
