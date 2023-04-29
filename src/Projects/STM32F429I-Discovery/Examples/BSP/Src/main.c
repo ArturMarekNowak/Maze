@@ -125,8 +125,7 @@ int main(void)
     Maze_Generate(maze, 15, 17, &rng_inst);
     Maze_Display(maze, 15, 17, 16, LCD_COLOR_RED);
 
-    /* Display LCD messages */
-
+    BSP_LCD_FillCircle(22, 23, 3);
 
   /* Wait For User inputs */
   while (1)
