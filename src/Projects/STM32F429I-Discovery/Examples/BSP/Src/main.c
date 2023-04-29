@@ -122,8 +122,8 @@ int main(void)
     BSP_LCD_Clear(LCD_COLOR_WHITE);
 
     int static maze[255];
-    Maze_Generate(maze, 10, 12, &rng_inst);
-    Maze_Display(maze, 10, 11, 20, LCD_COLOR_RED);
+    Maze_Generate(maze, 15, 17, &rng_inst);
+    Maze_Display(maze, 15, 17, 16, LCD_COLOR_RED);
 
     /* Display LCD messages */
 
