@@ -406,19 +406,6 @@ void Toggle_Leds(void)
   }
 }
 
-/**
-  * @brief  EXTI line detection callbacks.
-  * @param  GPIO_Pin: Specifies the pins connected EXTI line
-  * @retval None
-  */
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-{
- if (GPIO_Pin == KEY_BUTTON_PIN)
- {
-   ubKeyPressed = SET;
- }
-}
-
 #ifdef  USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
