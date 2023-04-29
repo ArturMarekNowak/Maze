@@ -50,8 +50,6 @@ BSP_DemoTypedef BSP_examples[]=
 #endif /* EE_M24LR64 */
 };
 
-#define ABS(x)         (x < 0) ? (-x) : x
-
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Display_DemoDescription(void);
@@ -67,31 +65,12 @@ static void Display_DemoDescription(void);
   */
 int main(void)
 { 
-  /* STM32F4xx HAL library initialization:
-       - Configure the Flash prefetch, instruction and Data caches
-       - Configure the Systick to generate an interrupt each 1 msec
-       - Set NVIC Group Priority to 4
-       - Global MSP (MCU Support Package) initialization
-     */
   HAL_Init();
-  
-  /* Configure LED3 and LED4 */
-  // BSP_LED_Init(LED3);
-  // BSP_LED_Init(LED4);
-  
-  /* Configure the system clock to 180 MHz */
+
   SystemClock_Config();
-  
-  /* Configure USER Button */
-  // BSP_PB_Init(BUTTON_KEY, BUTTON_MODE_EXTI);
-  
-  /*##-1- Initialize the LCD #################################################*/
-  /* Initialize the LCD */
+
   BSP_LCD_Init();
   BSP_GYRO_Init();
-
-
-
 
   __HAL_RCC_RNG_CLK_ENABLE();
   static RNG_HandleTypeDef rng_inst;
@@ -106,42 +85,29 @@ int main(void)
   if (HAL_RNG_GenerateRandomNumber(&rng_inst, &rnd) != HAL_OK)
 	  return 0xfffffffE;
 
-  //RNG_HandleTypeDef *hrng;
-  //HAL_StatusTypeDef status;
-
-  //hrng->State = HAL_RNG_STATE_READY;
-
-  //Enable RNG peripheral clock
-  //status = HAL_RNG_Init(hrng);
-
-  /* Initialize the LCD Layers */
   BSP_LCD_LayerDefaultInit(1, LCD_FRAME_BUFFER);
-  
-  // Display_DemoDescription();
-  
-  /* Set LCD Foreground Layer  */
-    BSP_LCD_SelectLayer(1);
 
-    BSP_LCD_SetFont(&LCD_DEFAULT_FONT);
+  BSP_LCD_SelectLayer(1);
 
-    /* Clear the LCD */
-    BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
-    BSP_LCD_Clear(LCD_COLOR_WHITE);
+  BSP_LCD_SetFont(&LCD_DEFAULT_FONT);
 
-    int static maze[255];
-    Maze_Generate(maze, 15, 17, &rng_inst);
-    Maze_Display(maze, 15, 17, 16, LCD_COLOR_RED);
+  BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
+  BSP_LCD_Clear(LCD_COLOR_WHITE);
 
-    int x_position = 22, y_position = 23;
-    BSP_LCD_FillCircle(x_position, y_position, 3);
+  int static maze[255];
+  Maze_Generate(maze, 15, 17, &rng_inst);
+  Maze_Display(maze, 15, 17, 16, LCD_COLOR_RED);
 
-    float Buffer[3];
-    float Xval, Yval, Zval = 0x00;
-    float sensitivity = 5000.0f;
-    int distance = 1;
+  int x_position = 22, y_position = 23;
+  BSP_LCD_FillCircle(x_position, y_position, 3);
 
-    BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
-  /* Wait For User inputs */
+  float Buffer[3];
+  float Xval, Yval, Zval = 0x00;
+  float sensitivity = 5000.0f;
+  int distance = 1;
+
+  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+
   while (1)
   {
 	  /* Read Gyro Angular data */
