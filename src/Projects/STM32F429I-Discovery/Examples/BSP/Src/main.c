@@ -55,10 +55,10 @@ BSP_DemoTypedef BSP_examples[]=
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Display_DemoDescription(void);
-bool BallHitTheWall(int array[], int x_position, int y_position, int radius);
+bool BallHitTheLosingWall(int array[], int x_position, int y_position, int radius);
+bool BallHitTheWinningWall(int x_position, int y_position);
 bool CalculateIfCollisionOccurred(int array[], int x, int y);
 
-#define  CIRCLE_RADIUS        30
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -115,7 +115,10 @@ int main(void)
 	Maze_Generate(maze, 15, 17, &rng_inst);
 	Maze_Display(maze, 15, 17, 16, LCD_COLOR_DARKBLUE);
 
-	int x_position = 22, y_position = 23;
+	//int x_position = 22, y_position = 23;
+
+	int x_position = 210, y_position = 240;
+
 	BSP_LCD_FillCircle(x_position, y_position, 3);
 
 	float Buffer[3];
@@ -142,7 +145,12 @@ int main(void)
 	    	y_position += distance;
 	    	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	    	BSP_LCD_FillCircle(x_position, y_position, 3);
-	    	if (BallHitTheWall(maze, x_position, y_position, 3))
+	    	if (BallHitTheWinningWall(x_position, y_position))
+	    	{
+	    		DisplayWinningScreen();
+	    		goto start;
+	    	}
+	    	if (BallHitTheLosingWall(maze, x_position, y_position, 3))
 	    	{
 	    		DisplayFailureScreen();
 	    		goto start;
@@ -155,7 +163,12 @@ int main(void)
 	      	y_position -= distance;
 	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	if (BallHitTheWinningWall(x_position, y_position))
+	        {
+	      		DisplayWinningScreen();
+	      		goto start;
+	      	}
+	      	if (BallHitTheLosingWall(maze, x_position, y_position, 3))
 	      	{
 	    		DisplayFailureScreen();
 	    		goto start;
@@ -168,7 +181,12 @@ int main(void)
 	    	x_position += distance;
 	    	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	    	BSP_LCD_FillCircle(x_position, y_position, 3);
-	    	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	if (BallHitTheWinningWall(x_position, y_position))
+	        {
+	      		DisplayWinningScreen();
+	      		goto start;
+	      	}
+	    	if (BallHitTheLosingWall(maze, x_position, y_position, 3))
 	    	{
 	    		DisplayFailureScreen();
 	    		goto start;
@@ -181,7 +199,12 @@ int main(void)
 	      	x_position -= distance;
 	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	if (BallHitTheWinningWall(x_position, y_position))
+	        {
+	      		DisplayWinningScreen();
+	      		goto start;
+	      	}
+	      	if (BallHitTheLosingWall(maze, x_position, y_position, 3))
 	      	{
 	    		DisplayFailureScreen();
 	    		goto start;
@@ -195,7 +218,12 @@ int main(void)
 	        y_position += distance;
 	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	if (BallHitTheWinningWall(x_position, y_position))
+	        {
+	      		DisplayWinningScreen();
+	      		goto start;
+	      	}
+	      	if (BallHitTheLosingWall(maze, x_position, y_position, 3))
 	      	{
 	    		DisplayFailureScreen();
 	    		goto start;
@@ -209,7 +237,12 @@ int main(void)
 	      	y_position -= distance;
 	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	if (BallHitTheWinningWall(x_position, y_position))
+	        {
+	      		DisplayWinningScreen();
+	      		goto start;
+	      	}
+	      	if (BallHitTheLosingWall(maze, x_position, y_position, 3))
 	      	{
 	    		DisplayFailureScreen();
 	    		goto start;
@@ -223,7 +256,12 @@ int main(void)
 	      	y_position -= distance;
 	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	if (BallHitTheWinningWall(x_position, y_position))
+	        {
+	      		DisplayWinningScreen();
+	      		goto start;
+	      	}
+	      	if (BallHitTheLosingWall(maze, x_position, y_position, 3))
 	      	{
 	    		DisplayFailureScreen();
 	    		goto start;
@@ -237,7 +275,12 @@ int main(void)
 	      	y_position += distance;
 	      	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	if (BallHitTheWall(maze, x_position, y_position, 3))
+	      	if (BallHitTheWinningWall(x_position, y_position))
+	        {
+	      		DisplayWinningScreen();
+	      		goto start;
+	      	}
+	      	if (BallHitTheLosingWall(maze, x_position, y_position, 3))
 	      	{
 	    		DisplayFailureScreen();
 	    		goto start;
@@ -245,6 +288,26 @@ int main(void)
 	    }
 	    HAL_Delay(20);
 	}
+}
+
+void DisplayWinningScreen()
+{
+	BSP_LCD_Clear(LCD_COLOR_LIGHTBLUE);
+	BSP_LCD_SetFont(&Font20);
+	BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+	BSP_LCD_DisplayStringAt(25, 140, "You have won!", LEFT_MODE);
+	HAL_Delay(2000);
+}
+
+bool BallHitTheWinningWall(int x_position, int y_position)
+{
+	if (x_position >= 208 && x_position <= 224 && y_position >= 256 && y_position <= 272)
+	{
+		victories++;
+		return true;
+	}
+
+	return false;
 }
 
 void DisplayFailureScreen()
@@ -256,7 +319,7 @@ void DisplayFailureScreen()
 	HAL_Delay(2000);
 }
 
-bool BallHitTheWall(int array[], int x_position, int y_position, int radius)
+bool BallHitTheLosingWall(int array[], int x_position, int y_position, int radius)
 {
 	int32_t  d;
 	uint32_t  curx;

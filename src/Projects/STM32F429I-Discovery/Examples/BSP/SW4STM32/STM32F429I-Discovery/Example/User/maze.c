@@ -32,6 +32,8 @@ void Maze_Display(const int maze[], const int width, const int height, const int
 	  top_left_rectangle_pixel_X = 0;
 	  top_left_rectangle_pixel_Y += rectangle_side_size;
    }
+
+	LCD_Drawing_Rectangle(208, 256, rectangle_side_size, rectangle_side_size, LCD_COLOR_ORANGE);
 }
 
 void Maze_Generate(int array[], const int width, const int height, RNG_HandleTypeDef *hrng) {
