@@ -66,6 +66,8 @@ ctrlp.root
 #html
 *.html
 
-#metadata
-/src/.metadata
-/Maze/.metadata
+.metadata
+.settings
+[Rr]elease
+[Dd]ebug
+.launch
