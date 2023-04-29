@@ -18,6 +18,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include <math.h>
 #include "stm32f4xx_hal_rng.h"
 #include "stlogo.h"
 
@@ -125,6 +126,7 @@ int main(void)
 	    	  y_position += distance;
 	    	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	    	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	    	  BallHitTheWall(maze, x_position, y_position, 3);
 	      }
 	      else if (Xval < -sensitivity && Yval < sensitivity && Yval > -sensitivity)
 	      {
@@ -133,6 +135,7 @@ int main(void)
 	      	  y_position -= distance;
 	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	  BallHitTheWall(maze, x_position, y_position, 3);
 	      }
 	      else if (Yval > sensitivity && Xval < sensitivity && Xval > -sensitivity)
 	      {
@@ -141,6 +144,7 @@ int main(void)
 	    	  x_position += distance;
 	    	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	    	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	    	  BallHitTheWall(maze, x_position, y_position, 3);
 	      }
 	      else if (Yval < -sensitivity && Xval < sensitivity && Xval > -sensitivity)
 	      {
@@ -149,6 +153,7 @@ int main(void)
 	      	  x_position -= distance;
 	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	  BallHitTheWall(maze, x_position, y_position, 3);
 	      }
 	      else if (Yval > sensitivity && Xval > sensitivity)
 	      {
@@ -158,6 +163,7 @@ int main(void)
 	      	  y_position += distance;
 	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	  BallHitTheWall(maze, x_position, y_position, 3);
 	      }
 	      else if (Yval < -sensitivity && Xval < -sensitivity)
 	      {
@@ -167,6 +173,7 @@ int main(void)
 	      	  y_position -= distance;
 	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	  BallHitTheWall(maze, x_position, y_position, 3);
 	      }
 	      else if (Yval > sensitivity && Xval < -sensitivity)
 	      {
@@ -176,6 +183,7 @@ int main(void)
 	      	  y_position -= distance;
 	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	  BallHitTheWall(maze, x_position, y_position, 3);
 	      }
 	      else if (Yval < -sensitivity && Xval > sensitivity)
 	      {
@@ -185,9 +193,86 @@ int main(void)
 	      	  y_position += distance;
 	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	  BallHitTheWall(maze, x_position, y_position, 3);
 	      }
 	      HAL_Delay(20);
   }
+}
+
+void BallHitTheWall(int array[], int x_position, int y_position, int radius)
+{
+	int32_t  d;
+	uint32_t  curx;
+	uint32_t  cury;
+
+	d = 3 - (radius << 1);
+	curx = 0;
+	cury = radius;
+
+	int row = 0;
+	int col = 0;
+
+	while (curx <= cury)
+	{
+		row = floor((x_position - radius) / 16);
+		col = floor((y_position - cury) / 16);
+
+		if (array[row + 15 * col] == 1)
+			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
+
+		row = floor((x_position - radius) / 16);
+		col = floor((y_position - cury) / 16);
+
+		if (array[row + 15 * col] == 1)
+			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
+
+		row = floor((x_position + cury) / 16);
+		col = floor((y_position - radius) / 16);
+
+		if (array[row + 15 * col] == 1)
+			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
+
+		row = floor((x_position - cury) / 16);
+		col = floor((y_position - radius) / 16);
+
+		if (array[row + 15 * col] == 1)
+			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
+
+		row = floor((x_position + radius) / 16);
+		col = floor((y_position + cury) / 16);
+
+		if (array[row + 15 * col] == 1)
+			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
+
+		row = floor((x_position - radius) / 16);
+		col = floor((y_position + cury) / 16);
+
+		if (array[row + 15 * col] == 1)
+			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
+
+		row = floor((x_position + cury) / 16);
+		col = floor((y_position + radius) / 16);
+
+		if (array[row + 15 * col] == 1)
+			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
+
+		row = floor((x_position - cury) / 16);
+		col = floor((y_position + radius) / 16);
+
+		if (array[row + 15 * col] == 1)
+			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
+
+		if (d < 0)
+		{
+		      d += (curx << 2) + 6;
+		}
+		else
+		{
+		      d += ((curx - cury) << 2) + 10;
+		      cury--;
+		}
+		curx++;
+	}
 }
 
 /**
