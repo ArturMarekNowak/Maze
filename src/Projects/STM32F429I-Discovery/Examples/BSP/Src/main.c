@@ -138,6 +138,7 @@ int main(void)
     float Buffer[3];
     float Xval, Yval, Zval = 0x00;
     float sensitivity = 5000.0f;
+    int distance = 1;
 
     BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
   /* Wait For User inputs */
@@ -147,48 +148,79 @@ int main(void)
 	      BSP_GYRO_GetXYZ(Buffer);
 
 	      /* Update autoreload and capture compare registers value */
-	      Xval = ABS((Buffer[0]));
-	      Yval = ABS((Buffer[1]));
-	      Zval = ABS((Buffer[2]));
+	      Xval = Buffer[0];
+	      Yval = Buffer[1];
+	      Zval = Buffer[2];
 
-	      if((Xval>Yval) && (Xval>Zval))
+	      if (Xval > sensitivity && Yval < sensitivity && Yval > -sensitivity)
 	      {
-	        if(Buffer[0] > sensitivity)
-	        {
-	        	y_position++;
-	        	BSP_LCD_FillCircle(x_position, y_position, 3);
-	        }
-	        else if(Buffer[0] < -sensitivity)
-	        {
-	        	y_position--;
-	        	BSP_LCD_FillCircle(x_position, y_position, 3);
-	        }
+	    	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	    	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	    	  y_position += distance;
+	    	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	    	  BSP_LCD_FillCircle(x_position, y_position, 3);
 	      }
-	      else if ((Yval>Xval) && (Yval>Zval))
+	      else if (Xval < -sensitivity && Yval < sensitivity && Yval > -sensitivity)
 	      {
-	        if(Buffer[1] < -sensitivity)
-	        {
-	        	x_position--;
-	        	BSP_LCD_FillCircle(x_position, y_position, 3);
-	        }
-	        else if(Buffer[1] > sensitivity)
-	        {
-	        	x_position++;
-	        	BSP_LCD_FillCircle(x_position, y_position, 3);
-	        }
+	    	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	  y_position -= distance;
+	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
 	      }
-	      else if ((Zval>Xval) && (Zval>Yval))
+	      else if (Yval > sensitivity && Xval < sensitivity && Xval > -sensitivity)
 	      {
-	        if(Buffer[2] < -sensitivity)
-	        {
-	        	BSP_LCD_FillCircle(x_position, y_position, 3);
-	        }
-	        else if(Buffer[2] > sensitivity)
-	        {
-	        	BSP_LCD_FillCircle(x_position, y_position, 3);
-	        }
+	    	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	    	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	    	  x_position += distance;
+	    	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	    	  BSP_LCD_FillCircle(x_position, y_position, 3);
 	      }
-	      HAL_Delay(25);
+	      else if (Yval < -sensitivity && Xval < sensitivity && Xval > -sensitivity)
+	      {
+	      	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	  x_position -= distance;
+	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      }
+	      else if (Yval > sensitivity && Xval > sensitivity)
+	      {
+	      	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	  x_position += distance;
+	      	  y_position += distance;
+	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      }
+	      else if (Yval < -sensitivity && Xval < -sensitivity)
+	      {
+	      	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	  x_position -= distance;
+	      	  y_position -= distance;
+	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      }
+	      else if (Yval > sensitivity && Xval < -sensitivity)
+	      {
+	      	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	  x_position += distance;
+	      	  y_position -= distance;
+	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      }
+	      else if (Yval < -sensitivity && Xval > sensitivity)
+	      {
+	      	  BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      	  x_position -= distance;
+	      	  y_position += distance;
+	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
+	      }
+	      HAL_Delay(20);
   }
 }
 
