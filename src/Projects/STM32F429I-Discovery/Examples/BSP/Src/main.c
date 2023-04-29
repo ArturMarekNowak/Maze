@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include <math.h>
+#include <stdbool.h>
 #include "stm32f4xx_hal_rng.h"
 #include "stlogo.h"
 
@@ -54,6 +55,8 @@ BSP_DemoTypedef BSP_examples[]=
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Display_DemoDescription(void);
+bool BallHitTheWall(int array[], int x_position, int y_position, int radius);
+bool CalculateIfCollisionOccurred(int array[], int x, int y);
 
 #define  CIRCLE_RADIUS        30
 
@@ -86,6 +89,7 @@ int main(void)
   if (HAL_RNG_GenerateRandomNumber(&rng_inst, &rnd) != HAL_OK)
 	  return 0xfffffffE;
 
+  start:
   BSP_LCD_LayerDefaultInit(1, LCD_FRAME_BUFFER);
 
   BSP_LCD_SelectLayer(1);
@@ -126,7 +130,7 @@ int main(void)
 	    	  y_position += distance;
 	    	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	    	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	    	  BallHitTheWall(maze, x_position, y_position, 3);
+	    	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
 	      }
 	      else if (Xval < -sensitivity && Yval < sensitivity && Yval > -sensitivity)
 	      {
@@ -135,7 +139,7 @@ int main(void)
 	      	  y_position -= distance;
 	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  BallHitTheWall(maze, x_position, y_position, 3);
+	      	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
 	      }
 	      else if (Yval > sensitivity && Xval < sensitivity && Xval > -sensitivity)
 	      {
@@ -144,7 +148,7 @@ int main(void)
 	    	  x_position += distance;
 	    	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	    	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	    	  BallHitTheWall(maze, x_position, y_position, 3);
+	    	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
 	      }
 	      else if (Yval < -sensitivity && Xval < sensitivity && Xval > -sensitivity)
 	      {
@@ -153,7 +157,7 @@ int main(void)
 	      	  x_position -= distance;
 	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  BallHitTheWall(maze, x_position, y_position, 3);
+	      	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
 	      }
 	      else if (Yval > sensitivity && Xval > sensitivity)
 	      {
@@ -163,7 +167,7 @@ int main(void)
 	      	  y_position += distance;
 	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  BallHitTheWall(maze, x_position, y_position, 3);
+	      	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
 	      }
 	      else if (Yval < -sensitivity && Xval < -sensitivity)
 	      {
@@ -173,7 +177,7 @@ int main(void)
 	      	  y_position -= distance;
 	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  BallHitTheWall(maze, x_position, y_position, 3);
+	      	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
 	      }
 	      else if (Yval > sensitivity && Xval < -sensitivity)
 	      {
@@ -183,7 +187,7 @@ int main(void)
 	      	  y_position -= distance;
 	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  BallHitTheWall(maze, x_position, y_position, 3);
+	      	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
 	      }
 	      else if (Yval < -sensitivity && Xval > sensitivity)
 	      {
@@ -193,13 +197,13 @@ int main(void)
 	      	  y_position += distance;
 	      	  BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
 	      	  BSP_LCD_FillCircle(x_position, y_position, 3);
-	      	  BallHitTheWall(maze, x_position, y_position, 3);
+	      	  if (BallHitTheWall(maze, x_position, y_position, 3)) goto start;
 	      }
 	      HAL_Delay(20);
   }
 }
 
-void BallHitTheWall(int array[], int x_position, int y_position, int radius)
+bool BallHitTheWall(int array[], int x_position, int y_position, int radius)
 {
 	int32_t  d;
 	uint32_t  curx;
@@ -209,58 +213,17 @@ void BallHitTheWall(int array[], int x_position, int y_position, int radius)
 	curx = 0;
 	cury = radius;
 
-	int row = 0;
-	int col = 0;
-
 	while (curx <= cury)
 	{
-		row = floor((x_position - radius) / 16);
-		col = floor((y_position - cury) / 16);
-
-		if (array[row + 15 * col] == 1)
-			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
-
-		row = floor((x_position - radius) / 16);
-		col = floor((y_position - cury) / 16);
-
-		if (array[row + 15 * col] == 1)
-			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
-
-		row = floor((x_position + cury) / 16);
-		col = floor((y_position - radius) / 16);
-
-		if (array[row + 15 * col] == 1)
-			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
-
-		row = floor((x_position - cury) / 16);
-		col = floor((y_position - radius) / 16);
-
-		if (array[row + 15 * col] == 1)
-			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
-
-		row = floor((x_position + radius) / 16);
-		col = floor((y_position + cury) / 16);
-
-		if (array[row + 15 * col] == 1)
-			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
-
-		row = floor((x_position - radius) / 16);
-		col = floor((y_position + cury) / 16);
-
-		if (array[row + 15 * col] == 1)
-			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
-
-		row = floor((x_position + cury) / 16);
-		col = floor((y_position + radius) / 16);
-
-		if (array[row + 15 * col] == 1)
-			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
-
-		row = floor((x_position - cury) / 16);
-		col = floor((y_position + radius) / 16);
-
-		if (array[row + 15 * col] == 1)
-			BSP_LCD_DisplayStringAt(100, 280, "you lost", RIGHT_MODE);
+		if (CalculateIfCollisionOccurred(array, x_position + curx, y_position - cury) ||
+		CalculateIfCollisionOccurred(array, x_position - curx, y_position - cury) ||
+		CalculateIfCollisionOccurred(array, x_position + cury, y_position - curx) ||
+		CalculateIfCollisionOccurred(array, x_position - cury, y_position - curx) ||
+		CalculateIfCollisionOccurred(array, x_position + curx, y_position + cury) ||
+		CalculateIfCollisionOccurred(array, x_position - curx, y_position + cury) ||
+		CalculateIfCollisionOccurred(array, x_position + cury, y_position + curx) ||
+		CalculateIfCollisionOccurred(array, x_position - cury, y_position + curx))
+			return true;
 
 		if (d < 0)
 		{
@@ -273,6 +236,18 @@ void BallHitTheWall(int array[], int x_position, int y_position, int radius)
 		}
 		curx++;
 	}
+
+	return false;
+}
+
+bool CalculateIfCollisionOccurred(int array[], int x, int y)
+{
+	int row = floor(x / 16);
+	int col = floor(y / 16);
+
+	if (!(array[row + 15 * col] == 1)) return false;
+
+	return true;
 }
 
 /**
