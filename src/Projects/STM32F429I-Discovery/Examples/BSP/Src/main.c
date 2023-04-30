@@ -47,6 +47,9 @@ int main(void)
 	if (HAL_RNG_Init(&rng_inst) != HAL_OK)
 		return 0xffffffff;
 
+	uint8_t status = 0;
+	status = BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
+
 	start:
 	BSP_LCD_LayerDefaultInit(1, LCD_FRAME_BUFFER);
 	BSP_LCD_SelectLayer(1);
@@ -62,6 +65,20 @@ int main(void)
 	sprintf(str, "%d", victories);
 	BSP_LCD_DisplayStringAt(85, 300, &str, LEFT_MODE);
 
+	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	BSP_LCD_FillRect(180, 280, 52, 32);
+	BSP_LCD_FillRect(120, 280, 52, 32);
+
+	BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
+	BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+	BSP_LCD_DisplayStringAt(194, 285, "New", LEFT_MODE);
+	BSP_LCD_DisplayStringAt(192, 295, "game", LEFT_MODE);
+	BSP_LCD_DisplayStringAt(128, 285, "Reset", LEFT_MODE);
+	BSP_LCD_DisplayStringAt(128, 295, "score", LEFT_MODE);
+	BSP_LCD_DrawRect(180, 280, 52, 32);
+	BSP_LCD_DrawRect(120, 280, 52, 32);
+	BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
+
 	int static maze[255];
 	Maze_Generate(maze, 15, 17, &rng_inst);
 	Maze_Display(maze, 15, 17, 16, LCD_COLOR_DARKBLUE);
@@ -74,11 +91,39 @@ int main(void)
 	float Xval, Yval, Zval = 0x00;
 	float sensitivity = 5000.0f;
 	int distance = 1;
+	TS_StateTypeDef tsState;
 
-	BSP_LCD_SetTextColor(LCD_COLOR_BLUE);
+	BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
 
 	while (1)
 	{
+		BSP_TS_GetState(&tsState);
+		if (tsState.TouchDetected == 1)
+		{
+			if (tsState.X >= 180 && tsState.X <= 180 + 52 &&
+				tsState.Y >= 280 && tsState.Y <= 280 + 32)
+			{
+				goto start;
+				HAL_Delay(1500);
+			}
+			else if (tsState.X >= 120 && tsState.X <= 120 + 52 &&
+					 tsState.Y >= 280 && tsState.Y <= 280 + 32)
+			{
+				victories = 0;
+				failures = 0;
+
+				BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+				BSP_LCD_DisplayStringAt(5, 280, "failures:", LEFT_MODE);
+				sprintf(str, "%d", failures);
+				BSP_LCD_DisplayStringAt(85, 280, &str, LEFT_MODE);
+				BSP_LCD_DisplayStringAt(5, 300, "victories:", LEFT_MODE);
+				sprintf(str, "%d", victories);
+				BSP_LCD_DisplayStringAt(85, 300, &str, LEFT_MODE);
+
+				HAL_Delay(50);
+			}
+		}
+
 		BSP_GYRO_GetXYZ(Buffer);
 
 	    Xval = Buffer[0];
@@ -239,10 +284,12 @@ int main(void)
 
 void DisplayWinningScreen()
 {
-	BSP_LCD_Clear(LCD_COLOR_LIGHTBLUE);
+	BSP_LCD_Clear(LCD_COLOR_LIGHTGREEN);
+	BSP_LCD_SetBackColor(LCD_COLOR_LIGHTGREEN);
 	BSP_LCD_SetFont(&Font20);
 	BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
 	BSP_LCD_DisplayStringAt(25, 140, "You have won!", LEFT_MODE);
+	BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
 	HAL_Delay(2000);
 }
 
@@ -259,10 +306,12 @@ bool BallHitTheWinningWall(int x_position, int y_position)
 
 void DisplayFailureScreen()
 {
-	BSP_LCD_Clear(LCD_COLOR_LIGHTBLUE);
+	BSP_LCD_Clear(LCD_COLOR_LIGHTRED);
+	BSP_LCD_SetBackColor(LCD_COLOR_LIGHTRED);
 	BSP_LCD_SetFont(&Font20);
 	BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
 	BSP_LCD_DisplayStringAt(25, 140, "You have lost!", LEFT_MODE);
+	BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
 	HAL_Delay(2000);
 }
 
