@@ -23,71 +23,33 @@
 #include "stlogo.h"
 
 static void SystemClock_Config(void);
-static void Display_DemoDescription(void);
 bool BallHitTheLosingWall(int array[], int x_position, int y_position, int radius);
 bool BallHitTheWinningWall(int x_position, int y_position);
 bool CalculateIfCollisionOccurred(int array[], int x, int y);
+void BoardInit();
+void DisplayUI();
+void DisplayWinningScreen();
+void DisplayFailureScreen();
 
 int static failures = 0, victories = 0;
+static RNG_HandleTypeDef rng_inst;
+char lcdStringBuffer[100];
 
 int main(void)
 { 
-	HAL_Init();
-
-	SystemClock_Config();
-
-	BSP_LCD_Init();
-	BSP_GYRO_Init();
-
-	__HAL_RCC_RNG_CLK_ENABLE();
-	static RNG_HandleTypeDef rng_inst;
-
-	rng_inst.Instance = RNG;
-
-	if (HAL_RNG_Init(&rng_inst) != HAL_OK)
-		return 0xffffffff;
-
-	uint8_t status = 0;
-	status = BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
+	BoardInit();
 
 	start:
-	BSP_LCD_LayerDefaultInit(1, LCD_FRAME_BUFFER);
-	BSP_LCD_SelectLayer(1);
-	BSP_LCD_SetFont(&Font12);
-	BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
-	BSP_LCD_Clear(LCD_COLOR_LIGHTBLUE);
-
-	char str[100];
-	BSP_LCD_DisplayStringAt(5, 280, "failures:", LEFT_MODE);
-	sprintf(str, "%d", failures);
-	BSP_LCD_DisplayStringAt(85, 280, &str, LEFT_MODE);
-	BSP_LCD_DisplayStringAt(5, 300, "victories:", LEFT_MODE);
-	sprintf(str, "%d", victories);
-	BSP_LCD_DisplayStringAt(85, 300, &str, LEFT_MODE);
-
-	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
-	BSP_LCD_FillRect(180, 280, 52, 32);
-	BSP_LCD_FillRect(120, 280, 52, 32);
-
-	BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
-	BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
-	BSP_LCD_DisplayStringAt(194, 285, "New", LEFT_MODE);
-	BSP_LCD_DisplayStringAt(192, 295, "game", LEFT_MODE);
-	BSP_LCD_DisplayStringAt(128, 285, "Reset", LEFT_MODE);
-	BSP_LCD_DisplayStringAt(128, 295, "score", LEFT_MODE);
-	BSP_LCD_DrawRect(180, 280, 52, 32);
-	BSP_LCD_DrawRect(120, 280, 52, 32);
-	BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
+	DisplayUI();
 
 	int static maze[255];
 	Maze_Generate(maze, 15, 17, &rng_inst);
 	Maze_Display(maze, 15, 17, 16, LCD_COLOR_DARKBLUE);
 
 	int x_position = 25, y_position = 23;
-
 	BSP_LCD_FillCircle(x_position, y_position, 3);
 
-	float Buffer[3];
+	float gyroBuffer[3];
 	float Xval, Yval, Zval = 0x00;
 	float sensitivity = 5000.0f;
 	int distance = 1;
@@ -114,21 +76,21 @@ int main(void)
 
 				BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
 				BSP_LCD_DisplayStringAt(5, 280, "failures:", LEFT_MODE);
-				sprintf(str, "%d", failures);
-				BSP_LCD_DisplayStringAt(85, 280, &str, LEFT_MODE);
+				sprintf(lcdStringBuffer, "%d", failures);
+				BSP_LCD_DisplayStringAt(85, 280, &lcdStringBuffer, LEFT_MODE);
 				BSP_LCD_DisplayStringAt(5, 300, "victories:", LEFT_MODE);
-				sprintf(str, "%d", victories);
-				BSP_LCD_DisplayStringAt(85, 300, &str, LEFT_MODE);
+				sprintf(lcdStringBuffer, "%d", victories);
+				BSP_LCD_DisplayStringAt(85, 300, &lcdStringBuffer, LEFT_MODE);
 
 				HAL_Delay(50);
 			}
 		}
 
-		BSP_GYRO_GetXYZ(Buffer);
+		BSP_GYRO_GetXYZ(gyroBuffer);
 
-	    Xval = Buffer[0];
-	    Yval = Buffer[1];
-	    Zval = Buffer[2];
+	    Xval = gyroBuffer[0];
+	    Yval = gyroBuffer[1];
+	    Zval = gyroBuffer[2];
 
 	    if (Xval > sensitivity && Yval < sensitivity && Yval > -sensitivity)
 	    {
@@ -282,6 +244,60 @@ int main(void)
 	}
 }
 
+void DisplayUI()
+{
+	BSP_LCD_LayerDefaultInit(1, LCD_FRAME_BUFFER);
+	BSP_LCD_SelectLayer(1);
+	BSP_LCD_SetFont(&Font12);
+	BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
+	BSP_LCD_Clear(LCD_COLOR_LIGHTBLUE);
+
+
+	BSP_LCD_DisplayStringAt(5, 280, "failures:", LEFT_MODE);
+	sprintf(lcdStringBuffer, "%d", failures);
+	BSP_LCD_DisplayStringAt(85, 280, &lcdStringBuffer, LEFT_MODE);
+	BSP_LCD_DisplayStringAt(5, 300, "victories:", LEFT_MODE);
+	sprintf(lcdStringBuffer, "%d", victories);
+	BSP_LCD_DisplayStringAt(85, 300, &lcdStringBuffer, LEFT_MODE);
+
+	BSP_LCD_SetTextColor(LCD_COLOR_WHITE);
+	BSP_LCD_FillRect(180, 280, 52, 32);
+	BSP_LCD_FillRect(120, 280, 52, 32);
+
+	BSP_LCD_SetBackColor(LCD_COLOR_WHITE);
+	BSP_LCD_SetTextColor(LCD_COLOR_BLACK);
+	BSP_LCD_DisplayStringAt(194, 285, "New", LEFT_MODE);
+	BSP_LCD_DisplayStringAt(192, 295, "game", LEFT_MODE);
+	BSP_LCD_DisplayStringAt(128, 285, "Reset", LEFT_MODE);
+	BSP_LCD_DisplayStringAt(128, 295, "score", LEFT_MODE);
+	BSP_LCD_DrawRect(180, 280, 52, 32);
+	BSP_LCD_DrawRect(120, 280, 52, 32);
+	BSP_LCD_SetBackColor(LCD_COLOR_LIGHTBLUE);
+}
+
+void BoardInit()
+{
+	HAL_Init();
+
+	SystemClock_Config();
+
+	BSP_LCD_Init();
+	BSP_GYRO_Init();
+
+	__HAL_RCC_RNG_CLK_ENABLE();
+
+	rng_inst.Instance = RNG;
+
+	if (HAL_RNG_Init(&rng_inst) != HAL_OK)
+		return;
+
+	uint8_t status = 0;
+	status = BSP_TS_Init(BSP_LCD_GetXSize(), BSP_LCD_GetYSize());
+
+	if (status != TS_OK)
+		return;
+}
+
 void DisplayWinningScreen()
 {
 	BSP_LCD_Clear(LCD_COLOR_LIGHTGREEN);
@@ -418,8 +434,8 @@ static void SystemClock_Config(void)
   RCC_ClkInitStruct.ClockType = (RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2);
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;  
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;  
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
   HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5);
 }
 
