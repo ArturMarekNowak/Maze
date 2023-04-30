@@ -1,5 +1,5 @@
 # Maze
-> This project focuses on creating Maze game on STM32F429 where the users job is to go to the end without touching the wall. The ball is moved by proper movement of STM board.
+> Implementation of Maze game on STM32F429 where the users job is to go to the end without touching the wall. The ball is moved by movement of the STM board
 
 ## Table of contents
 * [General info](#general-info)
@@ -10,21 +10,22 @@
 * [Status](#status)
 
 ## General info
-All general informations are attached in pdf file. 
+<p align="center">
+<img src=docs/westworld.png  width="60%" height="30%">
+</p>
+<p align="center">
+"[...] Someone to stop me from finding the center of the maze?" ~ Man in black, Westworld TV series
+<p>
 
 ## Screenshots
-All screshots are attached in pdf file. 
+https://www.youtube.com/watch?v=qKLQkHr965o
 
 ## Technologies
-* Keil uVision
-* ST-LINK
+* STM32F429
+* STM32CubeIDE
 
 ## Setup
-Move to 28-STM32F429_L3GD20 directory and open project.uvprojx file. It should load whole project in Keil.
-
-## Features
-To-do list:
-* The algorithm of collision detection could be simplified a lot by using modulo operation to each block instead of making an ID for each pixel. 
+Clone repository and open the directory within STM32CubeIDE
 
 ## Status
 Project is: _finished_
