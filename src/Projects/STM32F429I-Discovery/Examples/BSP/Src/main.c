@@ -66,7 +66,7 @@ int main(void)
 	Maze_Generate(maze, 15, 17, &rng_inst);
 	Maze_Display(maze, 15, 17, 16, LCD_COLOR_DARKBLUE);
 
-	int x_position = 22, y_position = 23;
+	int x_position = 25, y_position = 23;
 
 	BSP_LCD_FillCircle(x_position, y_position, 3);
 
